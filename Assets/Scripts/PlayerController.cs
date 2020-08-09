@@ -5,8 +5,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private float speedMove = 13.0f;
-    private float speedRotateHorizontal = 20.0f;
-    private float speedRotateVertical = 20.0f;
+    private float speedRotateHorizontal = 80.0f;
+    private float speedRotateVertical = 80.0f;
 
     private CharacterController _characterController;
     private float cameraVerticalAngle = 0f;
