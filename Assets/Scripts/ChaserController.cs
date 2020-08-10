@@ -11,6 +11,8 @@ public class ChaserController : MonoBehaviour
 
     [SerializeField] public GameObject Player;
     [SerializeField] public GameObject Eye;
+    [SerializeField] public GameObject AudioChase;
+    private AudioSource _audioChase;
     private NavMeshAgent _agent;
     private float _normalSpeed = 3.5f; 
     private float _chaseSpeed = 8.5f;
@@ -34,6 +36,10 @@ public class ChaserController : MonoBehaviour
                 Debug.Log("Detect");
                 _isChaseMode = true;
                 _agent.speed = _chaseSpeed;
+                if (!_audioChase.isPlaying)
+                {
+                    _audioChase.Play();
+                }
             }
         };
         _chaseEyeController.OnLost += (collider) =>
@@ -43,25 +49,35 @@ public class ChaserController : MonoBehaviour
                 Debug.Log("Lost");
                 _isChaseMode = false;
                 _agent.speed = _normalSpeed;
+                if (_audioChase.isPlaying)
+                {
+                    _audioChase.Stop();
+                }
             }
         };
-        _nextPointIndex = -1;
+        _nextPointIndex = 0;
         UpdateNextPoint();
-        
+        _audioChase = AudioChase.GetComponent<AudioSource>();
     }
 
     void UpdateNextPoint()
     {
-        if (_nextPointIndex >= (Points.Length - 1))
+        bool is_detect = false;
+        for (int i = _nextPointIndex + 1; i < Points.Length; i++)
+        {
+            if (Points[i] != null)
+            {
+                _nextPointIndex = i;
+                is_detect = true;
+                break;
+            }
+        }
+
+        if (!is_detect)
         {
             _nextPointIndex = 0;
         }
-        else
-        {
-            _nextPointIndex++;
-        }
         _agent.destination = Points[_nextPointIndex].position;
-        Debug.Log(_nextPointIndex);
     }
 
     // Update is called once per frame
