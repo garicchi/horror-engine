@@ -5,3 +5,6 @@ player足音
 
 追跡BGM
 [Crisis - DOVASYNDROME](https://dova-s.jp/bgm/download6649.html)
+
+血テクスチャ
+[素材っち](https://sozaizchi.com/sozai/line/kakomi/33.html)

@@ -19,20 +19,24 @@ public class PlayerController : MonoBehaviour
     private FlashLightController _flashLightController;
     [SerializeField] public GameObject AudioWalk;
     private AudioSource _audioSourceWalk;
-    
-    private int _itemCount;
+    [SerializeField] public GameObject AudioScream;
+    private AudioSource _audioSourceScream;
+
+    public int ItemCount;
+    public int MissionItemCount = 1;
 
     public event Action<int> GetItemEvent;
+
+    public event Action CompleteMissionEvent;
     // Start is called before the first frame update
     void Start()
     {
         _characterController = GetComponent<CharacterController>();
         _flashLightController = FlashLight.GetComponent<FlashLightController>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        _itemCount = 0;
+        ItemCount = 0;
         //_flashLightController.ToggleSwitch();
         _audioSourceWalk = AudioWalk.GetComponent<AudioSource>();
+        _audioSourceScream = AudioScream.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -84,8 +88,12 @@ public class PlayerController : MonoBehaviour
                 if (hitObj.CompareTag("item"))
                 {
                     hit.collider.gameObject.SetActive(false);
-                    _itemCount++;
-                    GetItemEvent(_itemCount);
+                    ItemCount++;
+                    GetItemEvent(ItemCount);
+                    if (ItemCount >= MissionItemCount)
+                    {
+                        CompleteMissionEvent();
+                    }
                 }
 
                 if (hitObj.CompareTag("battery"))
@@ -95,6 +103,11 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+    }
 
+    public void Scream()
+    {
+        _audioSourceScream.loop = false;
+        _audioSourceScream.Play();
     }
 }

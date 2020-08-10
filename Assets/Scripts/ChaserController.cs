@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -12,6 +13,7 @@ public class ChaserController : MonoBehaviour
     [SerializeField] public GameObject Player;
     [SerializeField] public GameObject Eye;
     [SerializeField] public GameObject AudioChase;
+    public event Action OnKilledEvent;
     private AudioSource _audioChase;
     private NavMeshAgent _agent;
     private float _normalSpeed = 3.5f; 
@@ -22,6 +24,8 @@ public class ChaserController : MonoBehaviour
     private ChaseEyeController _chaseEyeController;
 
     private bool _isChaseMode = false;
+
+    private bool _isKilled = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -94,5 +98,24 @@ public class ChaserController : MonoBehaviour
                 UpdateNextPoint();
             }
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("killed");
+            if (!_isKilled)
+            {
+                _agent.isStopped = true;
+                OnKilledEvent();
+                _isKilled = true;
+            }
+        }
+    }
+
+    public void ChangeChaseState(bool isStop)
+    {
+        _agent.isStopped = isStop;
     }
 }

@@ -26,8 +26,14 @@ public class UIController : MonoBehaviour
         _playerController = Player.GetComponent<PlayerController>();
         _playerController.GetItemEvent += (itemCount) =>
         {
-            TextItemStatus.text = $"{itemCount}/10 取得";
+            UpdateItemStatus(itemCount);
         };
+        UpdateItemStatus(_playerController.ItemCount);
+    }
+
+    void UpdateItemStatus(int itemCount)
+    {
+        TextItemStatus.text = $"{itemCount}/{_playerController.MissionItemCount} 取得";
     }
 
     // Update is called once per frame

@@ -33,6 +33,7 @@ public class FlashLightController : MonoBehaviour
                 _light.range = 0;
             }
         });
+        _timerBatteryDecrease.Start();
         _light.range = 0;
     }
 
