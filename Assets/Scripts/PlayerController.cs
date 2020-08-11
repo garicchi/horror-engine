@@ -6,7 +6,7 @@ using UnityEngine.Experimental.GlobalIllumination;
 
 public class PlayerController : MonoBehaviour
 {
-    private float speedMove = 13.0f;
+    private float speedMove = 8.0f;
     private float speedRotateHorizontal = 120.0f;
     private float speedRotateVertical = 120.0f;
 
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     private AudioSource _audioSourceScream;
 
     public int ItemCount;
-    public int MissionItemCount = 1;
+    public int MissionItemCount = 5;
 
     public event Action<int> GetItemEvent;
 
@@ -72,6 +72,7 @@ public class PlayerController : MonoBehaviour
         cameraVerticalAngle += rotateVertical;
         cameraVerticalAngle = Mathf.Clamp(cameraVerticalAngle, -80f, 80f);
         FaceCamera.transform.localEulerAngles = new Vector3(cameraVerticalAngle, 0, 0);
+        FlashLight.transform.localEulerAngles = new Vector3(cameraVerticalAngle, 0, 0);
 
         if (Input.GetMouseButtonDown(1))
         {

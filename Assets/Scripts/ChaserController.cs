@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq;
 
 [RequireComponent(typeof(NavMeshAgent))]
 
@@ -13,8 +14,10 @@ public class ChaserController : MonoBehaviour
     [SerializeField] public GameObject Player;
     [SerializeField] public GameObject Eye;
     [SerializeField] public GameObject AudioChase;
+    [SerializeField] public GameObject AudioWalk;
     public event Action OnKilledEvent;
     private AudioSource _audioChase;
+    private AudioSource _audioWalk;
     private NavMeshAgent _agent;
     private float _normalSpeed = 3.5f; 
     private float _chaseSpeed = 8.5f;
@@ -26,6 +29,8 @@ public class ChaserController : MonoBehaviour
     private bool _isChaseMode = false;
 
     private bool _isKilled = false;
+
+    private List<Transform> _patrolPointList;
     // Start is called before the first frame update
     void Start()
     {
@@ -60,28 +65,31 @@ public class ChaserController : MonoBehaviour
             }
         };
         _nextPointIndex = 0;
-        UpdateNextPoint();
         _audioChase = AudioChase.GetComponent<AudioSource>();
+        _audioWalk = AudioWalk.GetComponent<AudioSource>();
+        _audioWalk.Play();
+        _patrolPointList = new List<Transform>();
+        foreach (var p in Points)
+        {
+            if (p != null)
+            {
+                _patrolPointList.Add(p);
+            }
+        }
+
+        _patrolPointList = _patrolPointList.OrderBy(q => Guid.NewGuid()).ToList();
+        UpdateNextPoint();
     }
 
     void UpdateNextPoint()
     {
         bool is_detect = false;
-        for (int i = _nextPointIndex + 1; i < Points.Length; i++)
-        {
-            if (Points[i] != null)
-            {
-                _nextPointIndex = i;
-                is_detect = true;
-                break;
-            }
-        }
-
-        if (!is_detect)
+        _nextPointIndex++;
+        if (_nextPointIndex > (_patrolPointList.Count - 1))
         {
             _nextPointIndex = 0;
-        }
-        _agent.destination = Points[_nextPointIndex].position;
+        } 
+        _agent.destination = _patrolPointList[_nextPointIndex].position;
     }
 
     // Update is called once per frame

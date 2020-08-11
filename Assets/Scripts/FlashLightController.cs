@@ -24,7 +24,7 @@ public class FlashLightController : MonoBehaviour
         _remainBattery = _batteryMax;
         _isOn = false;
         _light = gameObject.GetComponent<Light>();
-        _timerBatteryDecrease = new TickTimer(1f, () =>
+        _timerBatteryDecrease = new TickTimer(2f, () =>
         {
             _remainBattery -= 2;
             _remainBattery = _remainBattery < 0 ? 0 : _remainBattery;
