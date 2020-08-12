@@ -12,7 +12,7 @@ namespace KowaiKit
         [SerializeField] public bool IsOn = true;
         [SerializeField] public int MaxBattery = 100;
         [SerializeField] public int RemainBattery = 100;
-        [SerializeField] public float BatteryDecreaseSec = 2;
+        [SerializeField] public float BatteryDecreaseSec = 1;
         [SerializeField] public int BatteryDecreaseAmount = 2;
 
         public event Action<int> OnUpdateBattery;
