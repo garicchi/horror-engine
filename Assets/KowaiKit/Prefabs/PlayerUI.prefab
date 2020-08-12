@@ -346,8 +346,12 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "WASD        \u79FB\u52D5\n\u53F3\u30AF\u30EA\u30C3\u30AF \u30E9\u30A4\u30C8ON/OFF\n\u5DE6\u30AF\u30EA\u30C3\u30AF
-    \u30A2\u30A4\u30C6\u30E0\u53D6\u5F97"
+  m_Text: 'WASD          MOVE
+
+    Right Click  LIGHT ON/OFF
+
+    Left Click    GET
+    ITEM'
 --- !u!1 &5917975345930954140
 GameObject:
   m_ObjectHideFlags: 0

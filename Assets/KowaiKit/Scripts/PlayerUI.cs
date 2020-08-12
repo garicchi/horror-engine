@@ -26,7 +26,7 @@ namespace KowaiKit
 
         public void UpdateItemStatus(int itemCount, int missionItemCount)
         {
-            TextMissionItemStatus.Value.text = $"{itemCount}/{missionItemCount} 取得";
+            TextMissionItemStatus.Value.text = $"{itemCount}/{missionItemCount} GET";
         }
 
         public void UpdateFlashLightBattery(int battery)

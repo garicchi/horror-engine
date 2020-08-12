@@ -19,7 +19,7 @@ namespace KowaiKit
         private PatrolPoint[] _patrolPoints;
         private NavMeshAgent _agent;
         private float _normalSpeed = 3.5f;
-        private float _chaseSpeed = 8.5f;
+        private float _chaseSpeed = 9.5f;
 
         private int _nextPointIndex;
 

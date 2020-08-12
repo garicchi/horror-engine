@@ -10,7 +10,7 @@ namespace KowaiKit
     public class Survivor : MonoBehaviour
     {
         [SerializeField] public float SpeedMove = 8.0f;
-        [SerializeField] public float SpeedRotate = 120.0f;
+        [SerializeField] public float SpeedRotate = 40.0f;
         [SerializeField] public int CurrentItemCount = 0;
         [SerializeField] public AudioClip SeWalk;
         [SerializeField] public AudioClip SeScream;
@@ -73,7 +73,7 @@ namespace KowaiKit
             float rotateVertical = -1f * Input.GetAxis("Mouse Y") * SpeedRotate * Time.deltaTime;
             transform.Rotate(Vector3.up, rotateHorizontal);
             _cameraVerticalAngle += rotateVertical;
-            _cameraVerticalAngle = Mathf.Clamp(_cameraVerticalAngle, -80f, 80f);
+            _cameraVerticalAngle = Mathf.Clamp(_cameraVerticalAngle, -50f, 50f);
             _faceCamera.transform.localEulerAngles = new Vector3(_cameraVerticalAngle, 0, 0);
             HandLight.transform.localEulerAngles = new Vector3(_cameraVerticalAngle, 0, 0);
 
@@ -86,7 +86,7 @@ namespace KowaiKit
             {
                 var ray = _faceCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                 var hit = new RaycastHit();
-                if (Physics.Raycast(ray, out hit))
+                if (Physics.Raycast(ray ,out hit))
                 {
                     var hitObj = hit.collider.gameObject;
                     MissionItem item; 
