@@ -30,7 +30,7 @@ namespace KowaiKit
                 RemainBattery = RemainBattery < 0 ? 0 : RemainBattery;
                 if (RemainBattery == 0)
                 {
-                    _light.range = 0;
+                    _light.intensity = 0;
                 }
                 OnUpdateBattery(RemainBattery);
             });

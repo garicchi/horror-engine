@@ -101,7 +101,7 @@ namespace KowaiKit
                     if (hitObj.TryGetComponent(out battery))
                     {
                         hitObj.SetActive(false);
-                        HandLight.Charge(20);
+                        HandLight.Charge(30);
                     }
                 }
             }
