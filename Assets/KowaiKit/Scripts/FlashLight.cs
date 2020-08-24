@@ -6,24 +6,42 @@ using UnityEngine.Experimental.GlobalIllumination;
 
 namespace KowaiKit
 {
+    /// <summary>
+    /// ハンドライトを制御するスクリプト
+    /// </summary>
     [RequireComponent(typeof(Light))]
     public class FlashLight : MonoBehaviour
     {
-        [SerializeField] public bool IsOn = true;
-        [SerializeField] public int MaxBattery = 100;
-        [SerializeField] public int RemainBattery = 100;
-        [SerializeField] public float BatteryDecreaseSec = 1;
-        [SerializeField] public int BatteryDecreaseAmount = 2;
+        /// <summary>
+        /// inspectorで設定したいフィールド
+        /// </summary>
+        [SerializeField] public bool IsOn = true;  // ライトががオンかオフか
+        [SerializeField] public int MaxBattery = 100;  // バッテリー最大値
+        [SerializeField] public int RemainBattery = 100;  // バッテリー残量
+        [SerializeField] public float BatteryDecreaseSec = 1;  // バッテリーが減る秒数
+        [SerializeField] public int BatteryDecreaseAmount = 2;  // バッテリーの減少量
 
-        public event Action<int> OnUpdateBattery;
+        /// <summary>
+        /// イベント
+        /// </summary>
+        public event Action<int> OnUpdateBattery;  // バッテリーが増減したとき
+
+        public event Action OnLostBattery;
+        
+        /// <summary>
+        /// privateフィールド
+        /// </summary>
         private Light _light;
         private float _defaultIntensity;
-
         private TickTimer _timerBatteryDecrease;
 
+        /// <summary>
+        /// 初期化
+        /// </summary>
         void Start()
         {
             _light = GetComponent<Light>();
+            // バッテリーの減少タイマー
             _timerBatteryDecrease = new TickTimer(BatteryDecreaseSec, () =>
             {
                 RemainBattery -= BatteryDecreaseAmount;
@@ -31,6 +49,7 @@ namespace KowaiKit
                 if (RemainBattery == 0)
                 {
                     _light.intensity = 0;
+                    OnLostBattery();
                 }
                 OnUpdateBattery(RemainBattery);
             });
@@ -38,6 +57,9 @@ namespace KowaiKit
             _defaultIntensity = _light.intensity;
         }
 
+        /// <summary>
+        /// スイッチのトグル
+        /// </summary>
         public void ToggleSwitch()
         {
             IsOn = !IsOn;
@@ -51,6 +73,10 @@ namespace KowaiKit
             }
         }
 
+        /// <summary>
+        /// バッテリーチャージ
+        /// </summary>
+        /// <param name="amount"></param>
         public void Charge(int amount)
         {
             RemainBattery += amount;
@@ -58,7 +84,9 @@ namespace KowaiKit
             OnUpdateBattery(RemainBattery);
         }
 
-        // Update is called once per frame
+        /// <summary>
+        /// フレームごとの処理
+        /// </summary>
         void Update()
         {
             if (IsOn)

@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace KowaiKit
 {
+    /// <summary>
+    /// 追跡者の反応範囲を制御するスクリプト
+    /// </summary>
     [RequireComponent(typeof(CapsuleCollider))]
     public class SearchArea : MonoBehaviour
     {

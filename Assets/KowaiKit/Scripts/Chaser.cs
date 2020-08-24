@@ -7,80 +7,94 @@ using System.Linq;
 
 namespace KowaiKit
 {
-    [RequireComponent(typeof(NavMeshAgent))]
-    [RequireComponent(typeof(CapsuleCollider))]
-
+    /// <summary>
+    /// 追跡者のスクリプト
+    /// </summary>
+    [RequireComponent(typeof(NavMeshAgent))]  // 追跡者はNavMeshAgentを使って追跡する
+    [RequireComponent(typeof(CapsuleCollider))]  // 追跡者がプレイヤーに追いついた時の判定コライダー
     public class Chaser : MonoBehaviour
     {
-        [SerializeField] public AudioClip AudioWalk;
-        [NonSerialized] public SearchArea SearchArea;
-        private AudioSource _audioWalk;
-        private Survivor[] _survivors;
-        private PatrolPoint[] _patrolPoints;
-        private NavMeshAgent _agent;
-        private float _normalSpeed = 3.5f;
-        private float _chaseSpeed = 9.0f;
+        /// <summary>
+        /// inspectorで設定可能なフィールド
+        /// </summary>
+        [SerializeField] public AudioClip AudioWalk;  // 追跡者が歩いている時の足音
 
-        private int _nextPointIndex;
-
-        private bool _isChaseMode = false;
-
-        private bool _isKilled = false;
+        [SerializeField] public float NormalSpeed = 3.5f;  // 通常時の歩行スピード
+        [SerializeField] public float ChaseSpeed = 9.5f;  // 追跡時のスピード
         
-        public event Action OnKilled;
+        /// <summary>
+        /// inspectorで設定可能ではないけどpublicにしたいフィールド
+        /// </summary>
+        [NonSerialized] public SearchArea SearchArea;  // 追跡者がプレイヤーに気づくエリアを制御するスクリプト
+        
+        /// <summary>
+        /// イベント
+        /// </summary>
+        public event Action OnKilled;  // サバイバーを殺したとき
+        
+        /// <summary>
+        /// privateフィールド一覧
+        /// </summary>
+        private AudioSource _audioWalk;  // 追跡者の足音のAudioSource
+        private Survivor _survivor;  // 追跡対象のプレイヤーのオブジェクト
+        private PatrolPoint[] _patrolPoints;  // 巡回ポイント
+        private NavMeshAgent _agent; // 巡回と追跡を制御するコンポーネント
+        private int _nextPointIndex; // 次の巡回ポイントのインデックス
+        private bool _isChaseMode = false;  // 追跡モードかどうか
+        private bool _isKilled = false; // サバイバーを殺したかどうか
 
+        /// <summary>
+        /// GameComponentのFindはStartよりも先に初期化する
+        /// </summary>
         private void Awake()
         {
             SearchArea = transform.Find("SearchArea").GetComponent<SearchArea>();
             _audioWalk = transform.Find("AudioWalk").GetComponent<AudioSource>();
         }
 
-        // Start is called before the first frame update
+        /// <summary>
+        /// 初期化
+        /// </summary>
         void Start()
         {
-            _survivors = FindObjectsOfType<Survivor>();
-            _agent = GetComponent<NavMeshAgent>();
-            _agent.autoBraking = false;
-            _agent.speed = _normalSpeed;
-            SearchArea.OnDetect += (collider) =>
-            {
-                _isChaseMode = true;
-                _agent.speed = _chaseSpeed;
-            };
-            SearchArea.OnLost += (collider) =>
-            {
-                _isChaseMode = false;
-                _agent.speed = _normalSpeed;
-            };
+            _survivor = FindObjectsOfType<Survivor>()[0]; // 追跡対象ははSurvivorクラスがAttachされているものとする
+            _patrolPoints = FindObjectsOfType<PatrolPoint>(); // 巡回ポイントはPatrolPointクラスがAttachされているものとする
+            // 巡回ポイントはランダムにシャッフルする
+            _patrolPoints = _patrolPoints.OrderBy(q => Guid.NewGuid()).ToArray();
+
             _nextPointIndex = 0;
             _audioWalk.clip = AudioWalk;
             _audioWalk.Play();
-            _patrolPoints = FindObjectsOfType<PatrolPoint>();
-
-            _patrolPoints = _patrolPoints.OrderBy(q => Guid.NewGuid()).ToArray();
+            
+            _agent = GetComponent<NavMeshAgent>();
+            _agent.autoBraking = false;
+            _agent.speed = NormalSpeed;
+            
+            // 追跡者を発見した時のイベント
+            SearchArea.OnDetect += (collider) =>
+            {
+                _isChaseMode = true;
+                _agent.speed = ChaseSpeed;
+                // 目的地をプレイヤーにする
+                _agent.destination = _survivor.transform.position;
+            };
+            // 追跡者を見失ったときのイベント
+            SearchArea.OnLost += (collider) =>
+            {
+                _isChaseMode = false;
+                _agent.speed = NormalSpeed;
+                // 目的地を次の巡回ポイントにする
+                UpdateNextPoint();
+            };
+            
             UpdateNextPoint();
         }
-
-        void UpdateNextPoint()
-        {
-            bool is_detect = false;
-            _nextPointIndex++;
-            if (_nextPointIndex > (_patrolPoints.Length - 1))
-            {
-                _nextPointIndex = 0;
-            }
-
-            _agent.destination = _patrolPoints[_nextPointIndex].transform.position;
-        }
-
-        // Update is called once per frame
+        
+        // フレームごとの処理
         void Update()
         {
-            if (_isChaseMode)
-            {
-                _agent.destination = _survivors[0].transform.position;
-            }
-            else
+            // 追跡モードでない場合、巡回ポイントに接近したら次の巡回ポイントに目的地を変更する
+            if (!_isChaseMode)
             {
                 if (Vector3.Distance(transform.position, _agent.destination) < 1.5f)
                 {
@@ -89,12 +103,29 @@ namespace KowaiKit
             }
         }
 
+        /// <summary>
+        /// 次の巡回ポイントへと目的地を変更する
+        /// </summary>
+        void UpdateNextPoint()
+        {
+            _nextPointIndex++;
+            if (_nextPointIndex > (_patrolPoints.Length - 1))
+            {
+                _nextPointIndex = 0;
+            }
+            _agent.destination = _patrolPoints[_nextPointIndex].transform.position;
+        }
+
+        /// <summary>
+        /// コライダーに接触があったら
+        /// </summary>
+        /// <param name="other"></param>
         private void OnTriggerEnter(Collider other)
         {
+            // 対象がSurvivorかどうかを判定してSurvivorなら殺す
             Survivor s = null;
             if (other.TryGetComponent(out s))
             {
-                Debug.Log("killed");
                 if (!_isKilled)
                 {
                     _agent.isStopped = true;
@@ -104,6 +135,10 @@ namespace KowaiKit
             }
         }
 
+        /// <summary>
+        /// 追跡を停止するかどうかを変更する
+        /// </summary>
+        /// <param name="isStop"></param>
         public void ChangeChaseState(bool isStop)
         {
             _agent.isStopped = isStop;

@@ -5037,6 +5037,11 @@ PrefabInstance:
       propertyPath: AudioWalk
       value: 
       objectReference: {fileID: 8300000, guid: 838b8cea603b78645bae3b7b43b6c3b0, type: 3}
+    - target: {fileID: 1954159886468607092, guid: 03e60850d076f3d42bc50a069cd7e7b8,
+        type: 3}
+      propertyPath: ChaseSpeed
+      value: 9.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 03e60850d076f3d42bc50a069cd7e7b8, type: 3}
 --- !u!4 &1753752192 stripped
@@ -6354,6 +6359,16 @@ PrefabInstance:
       propertyPath: SeScream
       value: 
       objectReference: {fileID: 8300000, guid: 1bcbeadaa53f4e74996cce6153a698fb, type: 3}
+    - target: {fileID: 2662869669420642248, guid: b6fbec2a5522d8f48ad1bc6aa7c0a55b,
+        type: 3}
+      propertyPath: AudioWalk
+      value: 
+      objectReference: {fileID: 8300000, guid: 3b2e5b589691a4e4bb02090c91249617, type: 3}
+    - target: {fileID: 2662869669420642248, guid: b6fbec2a5522d8f48ad1bc6aa7c0a55b,
+        type: 3}
+      propertyPath: AudioScream
+      value: 
+      objectReference: {fileID: 8300000, guid: 24b452054f0af8a44a6a56f929f6d7fd, type: 3}
     - target: {fileID: 7453106455221890615, guid: b6fbec2a5522d8f48ad1bc6aa7c0a55b,
         type: 3}
       propertyPath: m_Name

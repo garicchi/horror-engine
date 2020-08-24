@@ -6,24 +6,43 @@ using UnityEngine.Experimental.GlobalIllumination;
 
 namespace KowaiKit
 {
+    /// <summary>
+    /// プレイヤー(Survivor)のスクリプト
+    /// </summary>
     [RequireComponent(typeof(CharacterController))]
     public class Survivor : MonoBehaviour
     {
-        [SerializeField] public float SpeedMove = 8.0f;
-        [SerializeField] public float SpeedRotate = 40.0f;
-        [SerializeField] public int CurrentItemCount = 0;
-        [SerializeField] public AudioClip SeWalk;
-        [SerializeField] public AudioClip SeScream;
-        [NonSerialized] public FlashLight HandLight;
+        /// <summary>
+        /// inspectorで設定可能なフィールド
+        /// </summary>
+        [SerializeField] public float SpeedMove = 8.0f;  // 移動スピード
+        [SerializeField] public float SpeedRotate = 40.0f;  // 視点回転スピード
+        [SerializeField] public AudioClip AudioWalk;  // 歩いている時のAudio
+        [SerializeField] public AudioClip AudioScream;  // 殺されたときの叫びAudio
         
+        /// <summary>
+        /// inspectorで設定したくないがpublicにしたいフィールド
+        /// </summary>
+        [NonSerialized] public FlashLight HandLight;  // ハンドライト
+        [NonSerialized] public int CurrentItemCount = 0;  // すでに持っているアイテム数
+        
+        /// <summary>
+        /// イベント
+        /// </summary>
+        public event Action<int> OnGetItemEvent;  // アイテムを取得したときのイベント
+        
+        /// <summary>
+        /// privateフィールド
+        /// </summary>
         private float _cameraVerticalAngle = 0f;
         private CharacterController _characterController;
         private Camera _faceCamera;
         private AudioSource _audioSourceWalk;
         private AudioSource _audioSourceScream;
 
-        public event Action<int> OnGetItemEvent;
-
+        /// <summary>
+        /// FindはStartよりも先にする
+        /// </summary>
         private void Awake()
         {
             HandLight = transform.Find("HandLight").GetComponent<FlashLight>();
@@ -32,24 +51,30 @@ namespace KowaiKit
             _audioSourceScream = transform.Find("SoundScream").GetComponent<AudioSource>();
         }
 
+        /// <summary>
+        /// 初期化
+        /// </summary>
         void Start()
         {
             _characterController = GetComponent<CharacterController>();
             
-            _audioSourceWalk.clip = SeWalk;
+            _audioSourceWalk.clip = AudioWalk;
             
-            _audioSourceScream.clip = SeScream;
+            _audioSourceScream.clip = AudioScream;
         }
 
-        // Update is called once per frame
+        /// <summary>
+        /// フレームごとの処理
+        /// </summary>
         void Update()
         {
-            float h = Input.GetAxis("Horizontal");
-            float v = Input.GetAxis("Vertical");
-            Vector3 forward = transform.forward * v * SpeedMove * Time.deltaTime;
-            Vector3 right = transform.right * h * SpeedMove * Time.deltaTime;
-
-            Vector3 moveVec = forward + right;
+            // WASDから移動ベクトルを取得する
+            var h = Input.GetAxis("Horizontal");
+            var v = Input.GetAxis("Vertical");
+            var forward = transform.forward * v * SpeedMove * Time.deltaTime;
+            var right = transform.right * h * SpeedMove * Time.deltaTime;
+            var moveVec = forward + right;
+            // 移動ベクトルが0以上なら歩く音声を流す
             if (moveVec.magnitude > 0)
             {
                 if (!_audioSourceWalk.isPlaying)
@@ -64,26 +89,30 @@ namespace KowaiKit
                     _audioSourceWalk.Stop();
                 }
             }
-
+            // 移動ベクトルを使って移動する
             _characterController.Move(moveVec);
 
-
-
-            float rotateHorizontal = Input.GetAxis("Mouse X") * SpeedRotate * Time.deltaTime;
-            float rotateVertical = -1f * Input.GetAxis("Mouse Y") * SpeedRotate * Time.deltaTime;
+            // マウスから視点の回転を得る
+            var rotateHorizontal = Input.GetAxis("Mouse X") * SpeedRotate * Time.deltaTime;
+            var rotateVertical = -1f * Input.GetAxis("Mouse Y") * SpeedRotate * Time.deltaTime;
+            // 横向きの視点を回転する
             transform.Rotate(Vector3.up, rotateHorizontal);
+            // 縦向きの視点はカメラとFlashLightのみ回転する
             _cameraVerticalAngle += rotateVertical;
-            _cameraVerticalAngle = Mathf.Clamp(_cameraVerticalAngle, -50f, 50f);
+            _cameraVerticalAngle = Mathf.Clamp(_cameraVerticalAngle, -50f, 50f);  // 最大回転角度は50度とする
             _faceCamera.transform.localEulerAngles = new Vector3(_cameraVerticalAngle, 0, 0);
             HandLight.transform.localEulerAngles = new Vector3(_cameraVerticalAngle, 0, 0);
 
+            // 右クリックでFlashLightをオンオフする
             if (Input.GetMouseButtonDown(1))
             {
                 HandLight.ToggleSwitch();
             }
 
+            // 左クリックでアイテムの取得をする
             if (Input.GetMouseButtonDown(0))
             {
+                // facecameraからrayを放ってヒットしたらアイテムの取得処理を行う
                 var ray = _faceCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                 var hit = new RaycastHit();
                 if (Physics.Raycast(ray ,out hit))
@@ -107,6 +136,9 @@ namespace KowaiKit
             }
         }
 
+        /// <summary>
+        /// 叫ぶ
+        /// </summary>
         public void Scream()
         {
             _audioSourceScream.loop = false;
