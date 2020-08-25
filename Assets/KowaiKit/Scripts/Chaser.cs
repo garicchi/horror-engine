@@ -17,15 +17,12 @@ namespace KowaiKit
         /// <summary>
         /// inspectorで設定可能なフィールド
         /// </summary>
+        [SerializeField] public SearchArea SearchArea;
+        [SerializeField] public AudioSource AudioSourceWalk;
         [SerializeField] public AudioClip AudioWalk;  // 追跡者が歩いている時の足音
 
         [SerializeField] public float NormalSpeed = 3.5f;  // 通常時の歩行スピード
         [SerializeField] public float ChaseSpeed = 9.5f;  // 追跡時のスピード
-        
-        /// <summary>
-        /// inspectorで設定可能ではないけどpublicにしたいフィールド
-        /// </summary>
-        [NonSerialized] public SearchArea SearchArea;  // 追跡者がプレイヤーに気づくエリアを制御するスクリプト
         
         /// <summary>
         /// イベント
@@ -35,22 +32,13 @@ namespace KowaiKit
         /// <summary>
         /// privateフィールド一覧
         /// </summary>
-        private AudioSource _audioWalk;  // 追跡者の足音のAudioSource
         private Survivor _survivor;  // 追跡対象のプレイヤーのオブジェクト
         private PatrolPoint[] _patrolPoints;  // 巡回ポイント
         private NavMeshAgent _agent; // 巡回と追跡を制御するコンポーネント
         private int _nextPointIndex; // 次の巡回ポイントのインデックス
         private bool _isChaseMode = false;  // 追跡モードかどうか
         private bool _isKilled = false; // サバイバーを殺したかどうか
-
-        /// <summary>
-        /// GameComponentのFindはStartよりも先に初期化する
-        /// </summary>
-        private void Awake()
-        {
-            SearchArea = transform.Find("SearchArea").GetComponent<SearchArea>();
-            _audioWalk = transform.Find("AudioWalk").GetComponent<AudioSource>();
-        }
+        
 
         /// <summary>
         /// 初期化
@@ -63,8 +51,8 @@ namespace KowaiKit
             _patrolPoints = _patrolPoints.OrderBy(q => Guid.NewGuid()).ToArray();
 
             _nextPointIndex = 0;
-            _audioWalk.clip = AudioWalk;
-            _audioWalk.Play();
+            AudioSourceWalk.clip = AudioWalk;
+            AudioSourceWalk.Play();
             
             _agent = GetComponent<NavMeshAgent>();
             _agent.autoBraking = false;

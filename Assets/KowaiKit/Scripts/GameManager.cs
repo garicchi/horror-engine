@@ -19,6 +19,7 @@ namespace KowaiKit
         [SerializeField] public Chaser Chaser;
         [SerializeField] public PlayerUI PlayerUi;
         [SerializeField] public int MissionItemCount = 5;  // ゲームをクリアするのに必要なアイテムの数
+        [SerializeField] public AudioSource AudioSourceChase; // 追跡BGMのAudioSource
         [SerializeField] public AudioClip AudioChase;  // 追跡BGM
 
         /// <summary>
@@ -31,15 +32,6 @@ namespace KowaiKit
         /// </summary>
         private TickTimer _finishTimer;
         private bool _isFinished = false;
-        private AudioSource _audioSourceChase;
-
-        /// <summary>
-        /// FindはStartより先に初期化する
-        /// </summary>
-        private void Awake()
-        {
-            _audioSourceChase = transform.Find("AudioSourceChase").GetComponent<AudioSource>();
-        }
 
         /// <summary>
         /// 初期化
@@ -97,21 +89,21 @@ namespace KowaiKit
             Cursor.visible = false;
             PlayerUi.UpdateItemStatus(Survivor.CurrentItemCount, MissionItemCount);
             PlayerUi.UpdateFlashLightBattery(Survivor.HandLight.RemainBattery);
-            _audioSourceChase.clip = AudioChase;
+            AudioSourceChase.clip = AudioChase;
             // 追跡者がサバイバーを発見したら追跡BGMを鳴らす
             Chaser.SearchArea.OnDetect += (collider) =>
             {
-                if (!_audioSourceChase.isPlaying)
+                if (!AudioSourceChase.isPlaying)
                 {
-                    _audioSourceChase.Play();
+                    AudioSourceChase.Play();
                 }
             };
             // 追跡者がサバイバーを見失ったら追跡BGMを消す
             Chaser.SearchArea.OnLost += (collider) =>
             {
-                if (_audioSourceChase.isPlaying)
+                if (AudioSourceChase.isPlaying)
                 {
-                    _audioSourceChase.Stop();
+                    AudioSourceChase.Stop();
                 }
             };
         }

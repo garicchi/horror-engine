@@ -69,6 +69,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c547dfe1cb85c5f44ae5d863ec9e50a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SearchArea: {fileID: 5857749920606614334}
+  AudioSourceWalk: {fileID: 3607026439175950630}
   AudioWalk: {fileID: 3607026439175950630}
   NormalSpeed: 3.5
   ChaseSpeed: 9.5

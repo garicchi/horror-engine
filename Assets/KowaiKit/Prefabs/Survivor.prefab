@@ -291,11 +291,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abcd587daeed6c4db9e80aa1f7d9c96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HandLight: {fileID: 7801716438639246342}
+  FaceCamera: {fileID: 7453106454972187846}
+  AudioSourceWalk: {fileID: 7453106454742792783}
+  AudioSourceScream: {fileID: 7453106455793175409}
   SpeedMove: 8
   SpeedRotate: 120
-  CurrentItemCount: 0
-  SeWalk: {fileID: 0}
-  SeScream: {fileID: 0}
+  AudioWalk: {fileID: 0}
+  AudioScream: {fileID: 0}
 --- !u!1 &7453106455793175423
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,3 +511,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4225125856861115533}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7801716438639246342 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6262231439537645707, guid: 0398e7de09b78f54caf24c05383ebb4d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4225125856861115533}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8c7a7358451fbf489c72a6bdf0b8de4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

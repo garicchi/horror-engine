@@ -15,6 +15,10 @@ namespace KowaiKit
         /// <summary>
         /// inspectorで設定可能なフィールド
         /// </summary>
+        [SerializeField] public FlashLight HandLight;  // ハンドライト
+        [SerializeField] public Camera FaceCamera;  // FPS視点カメラ
+        [SerializeField] public AudioSource AudioSourceWalk;  // 歩行サウンドのAudioSource
+        [SerializeField] public AudioSource AudioSourceScream;  // 悲鳴サウンドのAudioSource
         [SerializeField] public float SpeedMove = 8.0f;  // 移動スピード
         [SerializeField] public float SpeedRotate = 40.0f;  // 視点回転スピード
         [SerializeField] public AudioClip AudioWalk;  // 歩いている時のAudio
@@ -23,7 +27,6 @@ namespace KowaiKit
         /// <summary>
         /// inspectorで設定したくないがpublicにしたいフィールド
         /// </summary>
-        [NonSerialized] public FlashLight HandLight;  // ハンドライト
         [NonSerialized] public int CurrentItemCount = 0;  // すでに持っているアイテム数
         
         /// <summary>
@@ -36,20 +39,6 @@ namespace KowaiKit
         /// </summary>
         private float _cameraVerticalAngle = 0f;
         private CharacterController _characterController;
-        private Camera _faceCamera;
-        private AudioSource _audioSourceWalk;
-        private AudioSource _audioSourceScream;
-
-        /// <summary>
-        /// FindはStartよりも先にする
-        /// </summary>
-        private void Awake()
-        {
-            HandLight = transform.Find("HandLight").GetComponent<FlashLight>();
-            _faceCamera = transform.Find("FaceCamera").GetComponent<Camera>();
-            _audioSourceWalk = transform.Find("SoundWalk").GetComponent<AudioSource>();
-            _audioSourceScream = transform.Find("SoundScream").GetComponent<AudioSource>();
-        }
 
         /// <summary>
         /// 初期化
@@ -58,9 +47,8 @@ namespace KowaiKit
         {
             _characterController = GetComponent<CharacterController>();
             
-            _audioSourceWalk.clip = AudioWalk;
-            
-            _audioSourceScream.clip = AudioScream;
+            AudioSourceWalk.clip = AudioWalk;
+            AudioSourceScream.clip = AudioScream;
         }
 
         /// <summary>
@@ -77,16 +65,16 @@ namespace KowaiKit
             // 移動ベクトルが0以上なら歩く音声を流す
             if (moveVec.magnitude > 0)
             {
-                if (!_audioSourceWalk.isPlaying)
+                if (!AudioSourceWalk.isPlaying)
                 {
-                    _audioSourceWalk.Play();
+                    AudioSourceWalk.Play();
                 }
             }
             else
             {
-                if (_audioSourceWalk.isPlaying)
+                if (AudioSourceWalk.isPlaying)
                 {
-                    _audioSourceWalk.Stop();
+                    AudioSourceWalk.Stop();
                 }
             }
             // 移動ベクトルを使って移動する
@@ -100,7 +88,7 @@ namespace KowaiKit
             // 縦向きの視点はカメラとFlashLightのみ回転する
             _cameraVerticalAngle += rotateVertical;
             _cameraVerticalAngle = Mathf.Clamp(_cameraVerticalAngle, -50f, 50f);  // 最大回転角度は50度とする
-            _faceCamera.transform.localEulerAngles = new Vector3(_cameraVerticalAngle, 0, 0);
+            FaceCamera.transform.localEulerAngles = new Vector3(_cameraVerticalAngle, 0, 0);
             HandLight.transform.localEulerAngles = new Vector3(_cameraVerticalAngle, 0, 0);
 
             // 右クリックでFlashLightをオンオフする
@@ -113,7 +101,7 @@ namespace KowaiKit
             if (Input.GetMouseButtonDown(0))
             {
                 // facecameraからrayを放ってヒットしたらアイテムの取得処理を行う
-                var ray = _faceCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+                var ray = FaceCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
                 var hit = new RaycastHit();
                 if (Physics.Raycast(ray ,out hit))
                 {
@@ -141,8 +129,8 @@ namespace KowaiKit
         /// </summary>
         public void Scream()
         {
-            _audioSourceScream.loop = false;
-            _audioSourceScream.Play();
+            AudioSourceScream.loop = false;
+            AudioSourceScream.Play();
         }
     }
 }

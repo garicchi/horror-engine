@@ -48,6 +48,8 @@ MonoBehaviour:
   Chaser: {fileID: 0}
   PlayerUi: {fileID: 0}
   MissionItemCount: 5
+  AudioSourceChase: {fileID: 6747541083371777711}
+  AudioChase: {fileID: 0}
 --- !u!1 &8771275747684802590
 GameObject:
   m_ObjectHideFlags: 0
