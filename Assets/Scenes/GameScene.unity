@@ -5036,7 +5036,7 @@ PrefabInstance:
         type: 3}
       propertyPath: AudioWalk
       value: 
-      objectReference: {fileID: 8300000, guid: 838b8cea603b78645bae3b7b43b6c3b0, type: 3}
+      objectReference: {fileID: 8300000, guid: 48de9309179289944bfbbcbb4cb7a81b, type: 3}
     - target: {fileID: 1954159886468607092, guid: 03e60850d076f3d42bc50a069cd7e7b8,
         type: 3}
       propertyPath: ChaseSpeed
@@ -6089,7 +6089,7 @@ PrefabInstance:
         type: 3}
       propertyPath: AudioChase
       value: 
-      objectReference: {fileID: 8300000, guid: 833861f4aeb09c9428fa0fa90df18457, type: 3}
+      objectReference: {fileID: 8300000, guid: dd544cc4fd5ed414e94c06451359ddfe, type: 3}
     - target: {fileID: 5126252596575330230, guid: b4a8dc23446d37f4db6adb5f70fedf78,
         type: 3}
       propertyPath: Player
